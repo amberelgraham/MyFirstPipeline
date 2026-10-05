@@ -14,6 +14,31 @@ OUTPUT_DIR="$HOME/MyFirstPipeline"
 #DATA_DIR this creates variable so we dont have to keep repeating the /localdisk/data/BPSM/MyFirstPipeline ie giving it a shortter name
 #OUTPUT_DIR  is the projects home directory 
 
+# Create directory for reference genome
+mkdir -p "$OUTPUT_DIR/genome"
+
+
+
+
+
+
+# Only prepare the reference genome if the Bowtie2 index does not already exist
+#if is from BASH  [ ! -f FILE] found during help test - I accidnetally ran the pipeline before it was finished 
+if [ ! -f "$OUTPUT_DIR/genome/Tcongo_index.1.bt2" ]
+then
+
+        # Copy reference genome into the project
+        cp "$DATA_DIR/Tcongo_genome/TriTrypDB-46_TcongolenseIL3000_2019_Genome.fasta.gz" "$OUTPUT_DIR/genome/"
+
+        # Decompress reference genome while keeping compressed copy
+        gzip -dk "$OUTPUT_DIR/genome/TriTrypDB-46_TcongolenseIL3000_2019_Genome.fasta.gz"
+
+        # Build Bowtie2 index
+        bowtie2-build "$OUTPUT_DIR/genome/TriTrypDB-46_TcongolenseIL3000_2019_Genome.fasta" \
+                      "$OUTPUT_DIR/genome/Tcongo_index"
+
+fi
+
 #Creating the directory for the fastq results, the -p then tells bash that if the folder already exists then to carry on after its created
  
 mkdir -p "$OUTPUT_DIR/fastq_results"
